@@ -40,8 +40,44 @@ const getInfoService = async ({
   formData.append("dt_fim", dt_fim);
 
   const result = await apiMaisFrete.post("", formData);
+  let newResult;
+  if (conjunto_de_dados === "viagens") {
+    newResult = result.data
+      .replace("<viagens>", "[")
+      .replace("</viagens>", "]")
+      .replaceAll("<viagem>", "{")
+      .replaceAll("</viagem>", "}");
+  } else if (conjunto_de_dados === "motoristas") {
+    newResult = result.data
+      .replace("<motoristas>", "[")
+      .replace("</motoristas>", "]")
+      .replaceAll("<motorista>", "{")
+      .replaceAll("</motorista>", "}");
+  } else if (conjunto_de_dados === "proprietarios") {
+    newResult = result.data
+      .replace("<proprietarios>", "[")
+      .replace("</proprietarios>", "]")
+      .replaceAll("<proprietario>", "{")
+      .replaceAll("</proprietario>", "}");
+  } else if (conjunto_de_dados === "veiculos") {
+    newResult = result.data
+      .replace("<veiculos>", "[")
+      .replace("</veiculos>", "]")
+      .replaceAll("<veiculo>", "{")
+      .replaceAll("</veiculo>", "}");
+  }
 
-  return result.data;
+  newResult = newResult
+    .replace(/(<\/)([a-zA-Z])\w+(>)/g, "")
+    .replace(/</g, '","')
+    .replace(/>/g, '":"')
+    .replace('[{",', "[{")
+    .replace("}]", '"}]')
+    .replace(/{",/g, "{")
+    .replace(/(\d)}/g, '"}')
+    .replace(/}{/g, "},{");
+
+  return JSON.parse(newResult);
 };
 
 export default getInfoService;
