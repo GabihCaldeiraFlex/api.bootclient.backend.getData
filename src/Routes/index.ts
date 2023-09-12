@@ -3,7 +3,7 @@ import { handleErrorMiddleware } from "../error";
 import MaisFreteRoutes from "./MaisFrete.routes";
 
 const appRoutes = (app: Express) => {
-  app.use("", MaisFreteRoutes());
+  app.use("/maisFrete", MaisFreteRoutes());
 
   app.use(handleErrorMiddleware);
 };
