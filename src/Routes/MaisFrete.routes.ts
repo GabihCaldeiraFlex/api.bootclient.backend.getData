@@ -6,7 +6,7 @@ const router = Router();
 const MaisFreteRoutes = () => {
   router.get("/info", getInfoController);
 
-  return Router;
+  return router;
 };
 
 export default MaisFreteRoutes;
