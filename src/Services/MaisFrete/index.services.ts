@@ -64,7 +64,10 @@ const getInfoService = async ({
       .replace("<veiculos>", "[")
       .replace("</veiculos>", "]")
       .replaceAll("<veiculo>", "{")
-      .replaceAll("</veiculo>", "}");
+      .replaceAll("</veiculo>", "}")
+      .replaceAll("<cavalo>", '"cavalo":{')
+      .replaceAll("</cavalo>", "},")
+      .replaceAll("/>", ">");
   }
 
   newResult = newResult
@@ -76,6 +79,10 @@ const getInfoService = async ({
     .replace(/{",/g, "{")
     .replace(/(\d)}/g, '"}')
     .replace(/}{/g, "},{");
+
+  if (conjunto_de_dados === "veiculos") {
+    newResult = newResult.replaceAll('},",', "},");
+  }
 
   return JSON.parse(newResult);
 };
