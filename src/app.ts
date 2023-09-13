@@ -9,7 +9,7 @@ app.use(express.json());
 appRoutes(app);
 
 app.listen(3001, () => {
-  console.log("Servidor Executando");
+  console.log("---------------> Servidor Executando <---------------");
 });
 
 export default app;

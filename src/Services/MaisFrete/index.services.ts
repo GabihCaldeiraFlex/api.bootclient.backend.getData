@@ -1,4 +1,5 @@
-import apiMaisFrete from "../../Utils/Api.MaisFrete";
+import apiMaisFrete from "../../Utils/MaisFrete/Api.MaisFrete";
+import { transformData } from "../../Utils/MaisFrete/transformData";
 import AppError from "../../error";
 import { GetInfoServiceProps } from "../../interfaces/maisFrete.interfaces";
 
@@ -39,52 +40,13 @@ const getInfoService = async ({
   formData.append("dt_ini", dt_ini);
   formData.append("dt_fim", dt_fim);
 
-  const result = await apiMaisFrete.post("", formData);
-  let newResult;
-  if (conjunto_de_dados === "viagens") {
-    newResult = result.data
-      .replace("<viagens>", "[")
-      .replace("</viagens>", "]")
-      .replaceAll("<viagem>", "{")
-      .replaceAll("</viagem>", "}");
-  } else if (conjunto_de_dados === "motoristas") {
-    newResult = result.data
-      .replace("<motoristas>", "[")
-      .replace("</motoristas>", "]")
-      .replaceAll("<motorista>", "{")
-      .replaceAll("</motorista>", "}");
-  } else if (conjunto_de_dados === "proprietarios") {
-    newResult = result.data
-      .replace("<proprietarios>", "[")
-      .replace("</proprietarios>", "]")
-      .replaceAll("<proprietario>", "{")
-      .replaceAll("</proprietario>", "}");
-  } else if (conjunto_de_dados === "veiculos") {
-    newResult = result.data
-      .replace("<veiculos>", "[")
-      .replace("</veiculos>", "]")
-      .replaceAll("<veiculo>", "{")
-      .replaceAll("</veiculo>", "}")
-      .replaceAll("<cavalo>", '"cavalo":{')
-      .replaceAll("</cavalo>", "},")
-      .replaceAll("/>", ">");
-  }
+  const { data } = await apiMaisFrete.post("", formData);
+  // console.log("--------->", data);
 
-  newResult = newResult
-    .replace(/(<\/)([a-zA-Z])\w+(>)/g, "")
-    .replace(/</g, '","')
-    .replace(/>/g, '":"')
-    .replace('[{",', "[{")
-    .replace("}]", '"}]')
-    .replace(/{",/g, "{")
-    .replace(/(\d)}/g, '"}')
-    .replace(/}{/g, "},{");
+  const newResult = transformData(conjunto_de_dados, data);
+  // console.log("-------->", newResult);
 
-  if (conjunto_de_dados === "veiculos") {
-    newResult = newResult.replaceAll('},",', "},");
-  }
-
-  return JSON.parse(newResult);
+  return newResult;
 };
 
 export default getInfoService;
