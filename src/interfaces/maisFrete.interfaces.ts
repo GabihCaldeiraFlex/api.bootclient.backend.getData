@@ -3,4 +3,6 @@ export type GetInfoServiceProps = {
   cnpj: string;
   dt_ini: string;
   dt_fim: string;
+  username: string;
+  password: string;
 };

@@ -8,7 +8,13 @@ const getInfoService = async ({
   cnpj,
   dt_ini,
   dt_fim,
+  username,
+  password,
 }: GetInfoServiceProps) => {
+  if (!username || username === "" || !password || password === "") {
+    throw new AppError("Os campos 'username' e 'password' são obrigatórios!");
+  }
+
   let emptyFields = [];
   if (!conjunto_de_dados || conjunto_de_dados === "") {
     emptyFields.push("conjunto_de_dados");
@@ -40,7 +46,12 @@ const getInfoService = async ({
   formData.append("dt_ini", dt_ini);
   formData.append("dt_fim", dt_fim);
 
-  const { data } = await apiMaisFrete.post("", formData);
+  const { data } = await apiMaisFrete.post("", formData, {
+    auth: {
+      username,
+      password,
+    },
+  });
   // console.log("--------->", data);
 
   const newResult = transformData(conjunto_de_dados, data);
