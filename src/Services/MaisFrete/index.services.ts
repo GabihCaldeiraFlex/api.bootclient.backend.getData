@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import apiMaisFrete from "../../Utils/MaisFrete/Api.MaisFrete";
 import { transformData } from "../../Utils/MaisFrete/transformData";
 import AppError from "../../error";
@@ -46,18 +47,22 @@ const getInfoService = async ({
   formData.append("dt_ini", dt_ini);
   formData.append("dt_fim", dt_fim);
 
-  const { data } = await apiMaisFrete.post("", formData, {
-    auth: {
-      username,
-      password,
-    },
-  });
-  // console.log("--------->", data);
+  let newResult;
+  try {
+    let { data } = await apiMaisFrete.post("", formData, {
+      auth: { username, password },
+    });
 
-  const newResult = transformData(conjunto_de_dados, data);
-  // console.log("-------->", newResult);
-
-  return newResult;
+    newResult = transformData(conjunto_de_dados, data);
+    return newResult;
+  } catch (err: any) {
+    if (err instanceof AppError) {
+      throw err;
+    } else {
+      let error = transformData(conjunto_de_dados, err.response.data);
+      throw new AppError(error, err.response.status);
+    }
+  }
 };
 
 export default getInfoService;

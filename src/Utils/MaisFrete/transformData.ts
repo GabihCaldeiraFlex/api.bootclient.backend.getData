@@ -1,5 +1,18 @@
+import AppError from "../../error";
+
 export const transformData = (conjunto_de_dados: string, data: string) => {
   let transformedData;
+
+  if (data.includes("<erros>")) {
+    let erros = data
+      .replace(/<\?.+\?>/g, "")
+      .replace(/<erros>/g, '"')
+      .replace(/<\/erros>/g, '"')
+      .replace(/<\/erro>/g, " ")
+      .replace(/<erro>/g, "");
+
+    throw new AppError(JSON.parse(erros).trim(), 404);
+  }
 
   if (conjunto_de_dados === "viagens") {
     if (data.includes("<viagens/>")) {
@@ -84,6 +97,7 @@ export const transformData = (conjunto_de_dados: string, data: string) => {
         .replace(/},",/g, "},");
     }
   }
+  // console.log("transformerdata", transformedData);
 
   return JSON.parse(transformedData!);
 };
